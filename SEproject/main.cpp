@@ -26,11 +26,18 @@ const int EDGE_WID = 20; // define edge with
 void printQrcode(QRcode * qrcode);
 IplImage *halfToneImg(IplImage * img, int width);
 /* 
-rander a img showing QRCODE
-param qrcode : qrcode object
-param width  : pix width of each module, must be multiple of 3 for convinence 
+*rander a img showing QRCODE
+*param qrcode		: qrcode object
+*param width		: pix width of each module, must be multiple of 3 for convinence 
 */
 IplImage *qrRander(QRcode * qrcode, int width, IplImage * hal);
+
+/*
+*	get the importance map using sobel method
+*	param	img		: grascale image
+*	retval			: importance map;
+*/
+void getImpmap(InputArray src , OutputArray dst);
 
 // private defination
 
@@ -51,6 +58,12 @@ int main(){
 	cvShowImage("half", halftoneimg);
 	//cvShowImage("qrcode", qrimg);
 
+	// imp map show
+	Mat mGray, mSrc(img, 1), tag;
+	cvtColor(mSrc, mGray, CV_BGR2GRAY, 0);
+	getImpmap(mGray, tag);
+	imshow("imp", tag);
+
 	// zbar test
 	cvShowImage("zbar in", qrimg);
 	ImageScanner scanner;
@@ -70,6 +83,11 @@ int main(){
 	destroyAllWindows();
 	system("pause"); 
 	return 0;
+}
+
+void getImpmap(InputArray src, OutputArray dst){
+	Sobel(src, dst, -1, 1, 1, 5);
+	return;
 }
 
 
